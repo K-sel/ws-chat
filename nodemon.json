@@ -1,0 +1,12 @@
+{
+  "watch": [
+    "server/**/*.mjs"
+  ],
+  "ext": "mjs,js,json",
+  "exec": "node server/server.mjs",
+  "restartable": "rs",
+  "delay": 1000,
+  "events": {
+    "restart": "echo '🔄 Redémarrage du serveur...'"
+  }
+}
