@@ -3,7 +3,7 @@
     "server/**/*.mjs"
   ],
   "ext": "mjs,js,json",
-  "exec": "node server/server.mjs",
+  "exec": "node --env-file=.env server/server.mjs",
   "restartable": "rs",
   "delay": 1000,
   "events": {

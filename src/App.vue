@@ -1,8 +1,10 @@
 <script setup>
+import { RouterView } from "vue-router";
+
 </script>
 
 <template>
-  <h1 class="text-4xl underline">WebSockets</h1>
+  <RouterView></RouterView>
 </template>
 
 <style scoped>
