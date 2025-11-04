@@ -18,11 +18,14 @@ export async function connect(username, error) {
 
     await ws.sub("chat", (message) => {
       messages.value.push(message);
-      console.log(
-        `${message.user} (${new Date(message.time).toLocaleTimeString()}): ${
-          message.msg
-        }`
-      );
+
+      console.log(message.type);
+
+      if(message.type === "user"){
+          console.log(`(${message.type}) : ${message.user} (${new Date(message.time).toLocaleTimeString()}): ${message.text}`);
+      } else if (message.type === "system") {
+          console.log(`(${message.type}) : (${new Date(message.time).toLocaleTimeString()}): ${message.text}`);
+      }
     });
 
     await ws.sub("user-list", (list) => {

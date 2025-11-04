@@ -28,9 +28,13 @@ const logout = () => {
       <!-- Messages Area -->
       <div class="flex-1 overflow-y-auto p-6">
         <div v-for="message in messages">
-          <p>
-            <span :style="{ color: message.color }">{{ message.user }}</span>
-            : {{ message.msg }}
+          <p v-if="message.type === 'user'">
+            <span :style="{ color: message.user.color }">{{ message.user.nickname }}</span>
+            : {{ message.text }}
+          </p>
+
+          <p v-if="message.type === 'system'" class="text-center text-sm text-gray-500">
+            {{ message.text }}
           </p>
         </div>
       </div>
