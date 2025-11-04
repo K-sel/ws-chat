@@ -4,12 +4,7 @@ import { router } from "../routes/router.js";
 import { connect } from "../store/chat.js";
 
 const error = ref(null);
-const isAuth = ref(false);
 const regex = /^[A-Za-z]+$/;
-
-if (isAuth.value) {
-  router.push("/chat");
-}
 
 const login = async (e) => {
   e.preventDefault();
@@ -24,8 +19,9 @@ const login = async (e) => {
   if (regex.test(username) && username.length >= 2 && username.length <= 20) {
     
     if (await connect(username, error)) {
-      isAuth.value = true;
       router.push("/chat");
+    } else {
+      error.value = "Username is already taken. Please choose another one.";
     }
 
   } else {

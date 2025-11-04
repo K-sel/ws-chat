@@ -1,12 +1,25 @@
 <script setup>
 import Chatbar from "../components/ChatBar.vue";
 import { router } from "../routes/router";
+import { watch, nextTick, ref } from "vue";
 import { messages, users, ws } from "../store/chat";
 
 const logout = () => {
   ws.close();
   router.push("/login");
 };
+
+const messagesArea = ref(null); 
+
+watch(messages, async () => {
+  await nextTick(); 
+  
+  messagesArea.value.scrollTo({
+    top: messagesArea.value.scrollHeight,
+    behavior: "instant",
+  });
+}, { deep: true });
+
 </script>
 
 <template>
@@ -26,16 +39,30 @@ const logout = () => {
       </div>
 
       <!-- Messages Area -->
-      <div class="flex-1 overflow-y-auto p-6">
+      <div ref="messagesArea" id="message-area" class="flex-1 overflow-y-auto p-6">
         <div v-for="message in messages">
+          
+          <!-- User Messages -->
           <p v-if="message.type === 'user'">
             <span :style="{ color: message.user.color }">{{ message.user.nickname }}</span>
             : {{ message.text }}
           </p>
 
+          <!-- Emotes Messages -->
+          <p v-if="message.type === 'em'">
+            <i> · {{ message.user.nickname }} {{ message.text }}</i>
+          </p>
+
+          <!-- Private Messages -->
+          <p v-if="message.type === 'pm'" class=" ">
+            <strong>(PM to {{ message.to }}) <span :style="{ color: message.color }">{{ message.from }}</span></strong> : {{ message.text }}
+          </p>
+
+          <!-- System Messages -->
           <p v-if="message.type === 'system'" class="text-center text-sm text-gray-500">
             {{ message.text }}
           </p>
+
         </div>
       </div>
 

@@ -1,15 +1,33 @@
 <script setup>
+import { CHANNELS } from "../../shared/channelsConfig.js";
 import { ws } from "../store/chat.js";
 
 const submit = async (e) => {
   e.preventDefault();
   const input = document.getElementById("chat-input");
   const message = input.value.trim();
-  if (message) {
-    // Envoyer le message via WebSocket ici
-    ws.pub("chat", message);
-  }
   input.value = "";
+
+  if (message.startsWith("/")) {
+    const command = message.split(" ")[0].toLowerCase();
+
+    switch (command) {
+      case "/em":
+        const emoteText = message.split(" ").slice(1).join(" ");
+        ws.rpc(command, emoteText);
+        break;
+
+      case "/pm":
+        const pmParts = message.split(" ");
+        const recipient = pmParts[1];
+        const pmText = pmParts.slice(2).join(" ");
+        ws.rpc(command, { to: recipient, text: pmText });
+        break;
+    }
+    
+  } else if (message.length > 0) {
+    ws.pub(CHANNELS.CHAT.name, message);
+  }
 };
 </script>
 

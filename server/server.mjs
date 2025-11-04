@@ -1,11 +1,15 @@
-import { WSServerPubSub } from "wsmini";
+import { WSServerPubSub, WSServerError } from "wsmini";
 import { getRandomColor } from "./utils/colors.js";
-import { CHANNELS } from "../shared/channelsConfig.js";
+import {
+  setupChatChannel,
+  setupUsersChannel,
+} from "./channels/setupChannels.js";
+import { setupPmCommand } from "./rpc/pmCommad.js";
+import { setupEmCommand } from "./rpc/emCommand.js";
 
-import UsersList from "./channels/UsersList.mjs";
-import Chat from "./channels/chat.mjs";
-
-const port = process.env.VITE_WS_PORT ? parseInt(process.env.VITE_WS_PORT) : 8080;
+const port = process.env.VITE_WS_PORT
+  ? parseInt(process.env.VITE_WS_PORT)
+  : 8080;
 const origins = process.env.VITE_WS_HOST ?? "localhost";
 
 export const wsServer = new WSServerPubSub({
@@ -19,13 +23,23 @@ export const wsServer = new WSServerPubSub({
   authCallback: (username, request, wsServer) => {
     const regex = /^[A-Za-z]+$/;
 
+    const allClients = wsServer.geClientsData();
+
+    for (const client of allClients) {
+      if (client.nickname.toLowerCase() === username.trim().toLowerCase()) {
+        return false;
+      }
+    }
+    
     if (!regex.test(username)) return false;
     return { nickname: username, role: "admin", color: getRandomColor() };
   },
 });
 
+setupChatChannel(wsServer);
+setupUsersChannel(wsServer);
 
-export const ChatChannel = new Chat(CHANNELS.CHAT.name, wsServer);
-export const UsersListChannel = new UsersList(CHANNELS.USERS.name, wsServer);
+setupPmCommand(wsServer);
+setupEmCommand(wsServer);
 
 wsServer.start();

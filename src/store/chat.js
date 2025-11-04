@@ -9,11 +9,9 @@ const wsProtocol = import.meta.env.VITE_WS_PROTOCOL ?? "wss";
 
 export const ws = new WSClient(`${wsProtocol}://${wsHost}:${wsPort}`);
 
-
 // Refs vue pour l'affichage
 export const messages = ref([]);
 export const users = ref([]);
-
 
 // Initialisation de la connection websocket
 export async function connect(username, error) {
@@ -25,7 +23,14 @@ export async function connect(username, error) {
     });
 
     await ws.sub(CHANNELS.USERS.name, (list) => {
-      users.value = list;  
+      users.value = list;
+    });
+
+    ws.onCmd("/pm", (data) => {
+      if (data.from == username) {
+        data.from += " (You)";
+      }
+      messages.value.push(data);
     });
 
     return true;
@@ -35,3 +40,5 @@ export async function connect(username, error) {
     return false;
   }
 }
+
+export async function emCommand() {}
