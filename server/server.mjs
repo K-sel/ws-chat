@@ -4,9 +4,7 @@ import { getRandomColor } from "./utils/colors.js";
 import UsersList from "./channels/UsersList.mjs";
 import Chat from "./channels/chat.mjs";
 
-const port = process.env.VITE_WS_PORT
-  ? parseInt(process.env.VITE_WS_PORT)
-  : 8080;
+const port = process.env.VITE_WS_PORT ? parseInt(process.env.VITE_WS_PORT) : 8080;
 const origins = process.env.VITE_WS_HOST ?? "localhost";
 
 export const wsServer = new WSServerPubSub({
@@ -26,7 +24,7 @@ export const wsServer = new WSServerPubSub({
 });
 
 
-new Chat("chat");
-new UsersList("user-list");
+export const ChatChannel = new Chat("chat", wsServer);
+export const UsersListChannel = new UsersList("user-list", wsServer);
 
 wsServer.start();

@@ -1,16 +1,16 @@
-import { wsServer } from "../server.mjs";
-
 export default class UsersList {
-
   #chanName;
+  #wsServer;
 
-  constructor(chanName) {
-    this.#chanName = chanName
+  constructor(chanName, wsServer) {
+    this.#wsServer = wsServer;
+    this.#chanName = chanName;
+
     this.createChannel();
   }
 
   createChannel() {
-    wsServer.addChannel(this.#chanName, {
+    this.#wsServer.addChannel(this.#chanName, {
       usersCanPub: false,
       usersCanSub: true,
 
@@ -25,14 +25,18 @@ export default class UsersList {
   }
 
   update = () => {
-    const clients = wsServer.getChannelClients(this.#chanName);
+    const clients = this.#wsServer.getChannelClients(this.#chanName);
     const usersConnected = [];
 
     for (const client of clients) {
-      const metadata = wsServer.clients.get(client);
+      const metadata = this.#wsServer.clients.get(client);
       usersConnected.push({ name: metadata.nickname, color: metadata.color });
     }
-    
-    wsServer.pub(this.#chanName, usersConnected);
-  };
+
+    this.#wsServer.pub(this.#chanName, usersConnected);
+  }
+
+  getChanName() {
+    return this.#chanName;
+  }
 }

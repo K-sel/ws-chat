@@ -1,38 +1,28 @@
-import { wsServer } from "../server.mjs";
-
 export default class Chat {
   #chanName;
-  
-  constructor(chanName) {
+  #wsServer;
+
+  constructor(chanName, wsServer) {
+    this.#wsServer = wsServer;
     this.#chanName = chanName;
+
     this.createChannel();
   }
 
   createChannel() {
-    wsServer.addChannel(this.#chanName, {
+    this.#wsServer.addChannel(this.#chanName, {
       usersCanPub: true,
       usersCanSub: true,
 
-      hookSubPost: (clientMetadata, wsServer) => {
-        const subPost = {
-          type: "system",
-          text: `${clientMetadata.nickname} joined the chat`,
-          time: Date.now(),
-        };
-        wsServer.pub(this.#chanName, subPost);
+      hookSubPost: (clientMetadata) => {
+        sendLeftJoinedMessage(clientMetadata, "joined");
       },
 
-      hookUnsubPost: (clientMetadata, wsServer) => {
-        const unSubPost = {
-          type: "system",
-          text: `${clientMetadata.nickname} left the chat`,
-          time: Date.now(),
-        };
-        wsServer.pub(this.#chanName, unSubPost);
+      hookUnsubPost: (clientMetadata) => {
+        sendLeftJoinedMessage(clientMetadata, "left");
       },
 
-      hookPub: (message, clientMetadata, wsServer) => {
-        console.log(clientMetadata);
+      hookPub: (message, clientMetadata) => {
         if (message.length > 100) throw new WSServerError("Message too long");
         return {
           type: "user",
@@ -42,5 +32,18 @@ export default class Chat {
         };
       },
     });
+  }
+
+  getChanName() {
+    return this.#chanName;
+  }
+
+  sendLeftJoinedMessage(clientMetadata, action) {
+    const post = {
+      type: "system",
+      text: `${clientMetadata.nickname} ${action} the chat`,
+      time: Date.now(),
+    };
+    this.#wsServer.pub(this.#chanName, post);
   }
 }
