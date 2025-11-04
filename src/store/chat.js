@@ -1,9 +1,6 @@
 import { WSClient } from "wsmini";
 import { ref } from "vue";
-
-// récupérer les instances des channels pour obtenir leur chanName via leur méthode getChanName.
-import { ChatChannel } from "../../server/server.mjs";
-import { UsersListChannel } from "../../server/server.mjs";
+import { CHANNELS } from "../../shared/channelsConfig";
 
 // Récupération des variables d'env et création du serveur websocket
 const wsHost = import.meta.env.VITE_WS_HOST ?? "localhost";
@@ -23,11 +20,11 @@ export async function connect(username, error) {
   try {
     await ws.connect(username);
 
-    await ws.sub(ChatChannel.getChanName, (message) => {
+    await ws.sub(CHANNELS.CHAT.name, (message) => {
       messages.value.push(message);
     });
 
-    await ws.sub(UsersListChannel.getChanName, (list) => {
+    await ws.sub(CHANNELS.USERS.name, (list) => {
       users.value = list;  
     });
 

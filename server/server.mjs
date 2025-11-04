@@ -1,5 +1,6 @@
 import { WSServerPubSub } from "wsmini";
 import { getRandomColor } from "./utils/colors.js";
+import { CHANNELS } from "../shared/channelsConfig.js";
 
 import UsersList from "./channels/UsersList.mjs";
 import Chat from "./channels/chat.mjs";
@@ -24,7 +25,7 @@ export const wsServer = new WSServerPubSub({
 });
 
 
-export const ChatChannel = new Chat("chat", wsServer);
-export const UsersListChannel = new UsersList("user-list", wsServer);
+export const ChatChannel = new Chat(CHANNELS.CHAT.name, wsServer);
+export const UsersListChannel = new UsersList(CHANNELS.USERS.name, wsServer);
 
 wsServer.start();

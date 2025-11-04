@@ -15,11 +15,11 @@ export default class Chat {
       usersCanSub: true,
 
       hookSubPost: (clientMetadata) => {
-        sendLeftJoinedMessage(clientMetadata, "joined");
+        this.sendLeftJoinedMessage(clientMetadata, "joined");
       },
 
       hookUnsubPost: (clientMetadata) => {
-        sendLeftJoinedMessage(clientMetadata, "left");
+        this.sendLeftJoinedMessage(clientMetadata, "left");
       },
 
       hookPub: (message, clientMetadata) => {
