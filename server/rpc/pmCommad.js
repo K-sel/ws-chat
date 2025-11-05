@@ -4,9 +4,8 @@ export function setupPmCommand(wsServer) {
   wsServer.addRpc("/pm", (data, clientMetadata, client, wsServer) => {
     const users = wsServer.getChannelClientsData(CHANNELS.USERS.name);
 
-    const recipientMetadata = users.find((el) => el.nickname === data.to);
+    const recipientMetadata = users.find((el) => el.nickname.trim().toLowerCase() === data.to.trim().toLowerCase());
 
-    console.log(recipientMetadata);
     if (!recipientMetadata) {
       throw new WSServerError("Cannot find recipient");
     }

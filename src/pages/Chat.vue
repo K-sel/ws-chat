@@ -44,13 +44,13 @@ watch(messages, async () => {
           
           <!-- User Messages -->
           <p v-if="message.type === 'user'">
-            <span :style="{ color: message.user.color }">{{ message.user.nickname }}</span>
+            <span :style="{ color: message.color }">{{ message.from }}</span>
             : {{ message.text }}
           </p>
 
           <!-- Emotes Messages -->
           <p v-if="message.type === 'em'">
-            <i> · {{ message.user.nickname }} {{ message.text }}</i>
+            <i> · {{ message.from }} {{ message.text }}</i>
           </p>
 
           <!-- Private Messages -->

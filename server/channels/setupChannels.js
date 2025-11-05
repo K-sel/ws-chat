@@ -28,11 +28,11 @@ export function setupChatChannel(wsServer) {
 
     hookPub: (message, clientMetadata) => {
       if (message.length > 100) throw new WSServerError("Message too long");
-      console.log(message);
       
       return {
         type: "user",
-        user: clientMetadata,
+        from: clientMetadata.nickname,
+        color: clientMetadata.color,
         text: message,
         time: Date.now(),
       };

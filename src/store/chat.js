@@ -20,6 +20,7 @@ export async function connect(username, error) {
 
     await ws.sub(CHANNELS.CHAT.name, (message) => {
       messages.value.push(message);
+      console.log(message);
     });
 
     await ws.sub(CHANNELS.USERS.name, (list) => {
